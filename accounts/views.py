@@ -9,7 +9,8 @@ from django.contrib.auth import authenticate,login,logout
 from rest_framework.decorators import action
 from rest_framework.exceptions import AuthenticationFailed
 import jwt,datetime
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 # from rest_framework_simplejwt.models import OutstandingToken
@@ -17,7 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class UserViews(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsAdminUser]
     authentication_classes = [JWTAuthentication]
     
     def create(self,request,*args,**kwargs):
@@ -56,13 +57,32 @@ class LoginViews(viewsets.ViewSet):
         # token = jwt.encode(payload,'secret',algorithm='HS256')
         refresh = RefreshToken.for_user(user)
         print(refresh)
+        if user.is_superuser:
+            # print("admin user")
+            user_admin_status = True
+        else:
+            user_admin_status = False
         return Response({
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
+            'user_admin_status':user_admin_status
         }, status=status.HTTP_200_OK)
         
         # return Response({'token':token},status=status.HTTP_200_OK)
-    
+class RefreshTokenView(APIView):
+    def post(self, request):
+        print(self,request)
+        try:
+            print("hi")
+            
+            refresh_token = request.data['refresh_token']
+            print("refresht",refresh_token)
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+            print("token",access_token)
+            return Response({'access_token': access_token}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)  
 # class LogoutViews(viewsets.ViewSet):
 #     @action(detail=False,methods=['post'])
 #     def logout(self,request):
@@ -101,6 +121,4 @@ class LogoutViews(viewsets.ViewSet):
             return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
         

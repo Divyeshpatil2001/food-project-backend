@@ -5,6 +5,8 @@ from .serializer import CategoriesSerializer,ProductSerializer,ProductImagesSeri
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import QueryDict
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class CategoriesView(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
@@ -13,10 +15,21 @@ class CategoriesView(viewsets.ModelViewSet):
 class ProductView(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    # permission_classes = [IsAuthenticated,IsAdminUser]
+    # authentication_classes = [JWTAuthentication]
     
 class ProductImagesView(viewsets.ModelViewSet):
     queryset = ProductImages.objects.all()
     serializer_class = ProductImagesSerializer
+    
+    def list(self, request):
+        product_id = request.query_params.get('product')
+        if product_id:
+            queryset = self.queryset.filter(product_id=product_id)
+        else:
+            queryset = self.queryset.all()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
     
     def create(self, request, *args, **kwargs):
         print(request.data)
@@ -45,28 +58,5 @@ class MenuView(viewsets.ModelViewSet):
 
     
     
-    # def create(self, request, *args, **kwargs):
-    #     product_id = request.data["product"]
-    #     count = request.data["count"]
-    #     print(count)
-    #     if Product.objects.filter(id=product_id).exists():
-    #         product = Product.objects.get(id=product_id)
-    #         product_images = []
-    #         for i in range(int(count)):
-    #             i = i + 1
-    #             print(i)
-    #             images_data = request.data['multiple_images_'+str(i)]
-    #             product_image = ProductImages.objects.create(
-    #             product=product,
-    #             multiple_images=images_data
-    #             )
-    #             product_images.append(product_image)
-    #         serializer = ProductImagesSerializer(product_images, many=True)
-    #         return Response({'msg':'success','product_images':serializer.data}, status=status.HTTP_201_CREATED)
-    #     return Response({'msg':'error'}, status=status.HTTP_201_CREATED)
-        
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
         
