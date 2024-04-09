@@ -16,23 +16,40 @@ class ProductImagesSerializer(serializers.ModelSerializer):
         model = ProductImages
         fields = '__all__'
         
-class MenuSerializer(serializers.ModelSerializer):
-    # select_product = serializers.ListField(child=serializers.IntegerField(),write_only=True)
-    # select_product = serializers.IntegerField()
-    # select_product = serializers.PrimaryKeyRelatedField(many=True,queryset=Product.objects.all(),write_only=True)
-    select_product = serializers.ListField(child=serializers.IntegerField(),write_only=True)
+# class MenuSerializer(serializers.ModelSerializer):
+#     # select_product = serializers.ListField(child=serializers.IntegerField(),write_only=True)
+#     # select_product = serializers.IntegerField()
+#     # select_product = serializers.PrimaryKeyRelatedField(many=True,queryset=Product.objects.all(),write_only=True)
+#     select_product = serializers.ListField(child=serializers.IntegerField(),write_only=True)
 
-    total_price = serializers.SerializerMethodField()
+#     total_price = serializers.SerializerMethodField()
     
-    def get_total_price(self,i):
-        return i.total_price()
+#     def get_total_price(self,i):
+#         return i.total_price()
+    
+#     class Meta:
+#         model = Menu
+#         fields = '__all__'
+        
+    
+class MenuSerializer(serializers.ModelSerializer):
+    select_product = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     
     class Meta:
         model = Menu
         fields = '__all__'
-        
-    
-        
+
+    def create(self, validated_data):
+        select_product_data = validated_data.pop('select_product', [])
+        menu = Menu.objects.create(**validated_data)
+        menu.select_product.set(select_product_data)
+        menu.total_price = menu.calculate_total_price()
+        menu.save()
+        return menu
+
+    def get_total_price(self, instance):
+        return instance.total_price  
         
     # def create(self, validated_data):
     #     print()

@@ -40,5 +40,5 @@ class Menu(models.Model):
     rating = models.IntegerField(choices=product_rating)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
-    def total_price(self):
+    def calculate_total_price(self):
         return sum(i.price for i in self.select_product.all())
