@@ -65,7 +65,8 @@ class LoginViews(viewsets.ViewSet):
         return Response({
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
-            'user_admin_status':user_admin_status
+            'user_admin_status':user_admin_status,
+            'user_id' : user.id
         }, status=status.HTTP_200_OK)
         
         # return Response({'token':token},status=status.HTTP_200_OK)

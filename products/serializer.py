@@ -32,6 +32,25 @@ class ProductImagesSerializer(serializers.ModelSerializer):
 #         fields = '__all__'
         
     
+# class MenuSerializer(serializers.ModelSerializer):
+#     select_product = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+#     total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    
+#     class Meta:
+#         model = Menu
+#         fields = '__all__'
+
+#     def create(self, validated_data):
+#         select_product_data = validated_data.pop('select_product', [])
+#         menu = Menu.objects.create(**validated_data)
+#         menu.select_product.set(select_product_data)
+#         menu.total_price = menu.calculate_total_price()
+#         menu.save()
+#         return menu
+
+#     def get_total_price(self, instance):
+#         return instance.total_price  
+ 
 class MenuSerializer(serializers.ModelSerializer):
     select_product = serializers.ListField(child=serializers.IntegerField(), write_only=True)
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
@@ -48,8 +67,19 @@ class MenuSerializer(serializers.ModelSerializer):
         menu.save()
         return menu
 
-    def get_total_price(self, instance):
-        return instance.total_price  
+    def update(self, instance, validated_data):
+        select_product_data = validated_data.pop('select_product', [])
+        instance.menu_name = validated_data.get('menu_name', instance.menu_name)
+        instance.menu_desc = validated_data.get('menu_desc', instance.menu_desc)
+        instance.availablity = validated_data.get('availablity', instance.availablity)
+        instance.rating = validated_data.get('rating', instance.rating)
+        instance.select_product.set(select_product_data)
+        instance.total_price = instance.calculate_total_price() 
+        instance.save()
+        return instance
+
+ 
+ 
         
     # def create(self, validated_data):
     #     print()

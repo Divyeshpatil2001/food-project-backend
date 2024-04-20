@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'products',
     'rest_framework_simplejwt.token_blacklist',
-    
+    'razorpay_backend',
+    'Orders'
 ]
 
 MIDDLEWARE = [
@@ -87,8 +88,8 @@ DATABASES = {
         'NAME': 'food_newdb',
         'USER': 'food_newuser',
         'PASSWORD': 'patil1233',
-        'HOST': 'localhost',   # Or the MySQL server hostname
-        'PORT': '3306',        # Default MySQL port
+        'HOST': 'localhost',  
+        'PORT': '3306',        
     }
 }
 
@@ -181,3 +182,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+# Razorpay
+
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")

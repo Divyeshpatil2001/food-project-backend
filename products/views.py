@@ -11,16 +11,20 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 class CategoriesView(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     
 class ProductView(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    # permission_classes = [IsAuthenticated,IsAdminUser]
-    # authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     
 class ProductImagesView(viewsets.ModelViewSet):
     queryset = ProductImages.objects.all()
     serializer_class = ProductImagesSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     
     def list(self, request):
         product_id = request.query_params.get('product')
@@ -55,6 +59,8 @@ class ProductImagesView(viewsets.ModelViewSet):
 class MenuView(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+    permission_classes = [IsAuthenticated,IsAdminUser]
+    authentication_classes = [JWTAuthentication]
 
     
     
