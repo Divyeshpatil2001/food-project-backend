@@ -4,7 +4,8 @@ from accounts.views import *
 
 router = DefaultRouter()
 
-router.register('RegisterUserAPI',UserViews)
+router.register('RegisterUserAPI',UserViews),
+router.register('ProfileAPIView',ProfileView)
 
 
 urlpatterns = [

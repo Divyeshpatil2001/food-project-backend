@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from rest_framework.response import Response
 from rest_framework import viewsets
-from .models import User
-from .serializer import UserSerializer
+from .models import User,Profile
+from .serializer import UserSerializer,ProfileSerializer
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate,login,logout
@@ -35,7 +35,12 @@ class UserViews(viewsets.ModelViewSet):
     #     logout(request)
     
     #     return redirect('/login')
-     
+class ProfileView(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    # permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    
 class LoginViews(viewsets.ViewSet):
     @action(detail=False,methods=['post'])
     def login(self,request):
@@ -62,11 +67,13 @@ class LoginViews(viewsets.ViewSet):
             user_admin_status = True
         else:
             user_admin_status = False
+        user_serializer = UserSerializer(user)
         return Response({
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
             'user_admin_status':user_admin_status,
-            'user_id' : user.id
+            'user_id' : user.id,
+            'user_detail':user_serializer.data
         }, status=status.HTTP_200_OK)
         
         # return Response({'token':token},status=status.HTTP_200_OK)

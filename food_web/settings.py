@@ -188,3 +188,8 @@ SIMPLE_JWT = {
 
 RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
+
+ALLOWED_HOSTS = ['21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app', 'localhost']
+
+CSRF_TRUSTED_ORIGINS = ['https://21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app']
+

@@ -5,6 +5,12 @@ from rest_framework.response import Response
 from razorpay_backend.api.razorpay.main import RazorpayClient
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from ..models import Transaction 
+
+import json
+
 
 rz_client = RazorpayClient()
 
@@ -63,3 +69,33 @@ class TransactionAPIView(APIView):
                 "error" : transaction_serializer.errors
             }
             return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        
+class RazorpayWebhook(APIView):
+    @csrf_exempt
+    def post(self, request):
+        payload = request.body
+        event = None
+
+        try:
+            event = json.loads(payload)
+        except ValueError as e:
+            # Invalid payload
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # Handle the event based on the type
+        if event['event'] == 'payment.authorized':
+            # Example: You can update your database or trigger actions here
+            payment_id = event['payload']['payment']['entity']['id']
+            order_id = event['payload']['payment']['entity']['order_id']
+            signature = event['payload']['payment']['entity']['signature']
+            amount = event['payload']['payment']['entity']['amount']
+
+            # Verify payment and save transaction
+            try:
+                rz_client.verify_payment(razorpay_order_id=order_id, razorpay_payment_id=payment_id, razorpay_signature=signature)
+                Transaction.objects.create(payment_id=payment_id, order_id=order_id, signature=signature, amount=amount)
+            except Exception as e:
+                # Handle verification failure
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return JsonResponse({'status': 'success'})
