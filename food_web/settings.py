@@ -82,14 +82,20 @@ WSGI_APPLICATION = 'food_web.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'food_newdb',
+#         'USER': 'food_newuser',
+#         'PASSWORD': 'patil1233',
+#         'HOST': 'localhost',  
+#         'PORT': '3306',        
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'food_newdb',
-        'USER': 'food_newuser',
-        'PASSWORD': 'patil1233',
-        'HOST': 'localhost',  
-        'PORT': '3306',        
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',  # Path to your SQLite database file
     }
 }
 
@@ -140,6 +146,7 @@ AUTH_USER_MODEL = 'accounts.User'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
 
@@ -186,9 +193,8 @@ SIMPLE_JWT = {
 
 # Razorpay
 
-RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
-RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
-
+RAZORPAY_KEY_ID = 'rzp_test_mK8OLxdgPMsqTK'
+RAZORPAY_KEY_SECRET = '4OuLolKbibgBjUr08siNjexN'
 ALLOWED_HOSTS = ['21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = ['https://21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app']

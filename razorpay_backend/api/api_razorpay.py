@@ -15,18 +15,33 @@ import json
 rz_client = RazorpayClient()
 
 class CreateOrderAPIView(APIView):
+    
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     
     def post(self,request):
+        print("Request data:", request.data)
         Create_Order_Serializer = CreateOrderSerializer(
             data = request.data
         )
         if Create_Order_Serializer.is_valid():
-            order_response  = rz_client.create_order(
-                amount=Create_Order_Serializer.validated_data.get("amount"),
-                currency=Create_Order_Serializer.validated_data.get("currency")
+            print("andr")
+            try:
+                order_response = rz_client.create_order(
+                    amount=Create_Order_Serializer.validated_data.get("amount"),
+                    currency=Create_Order_Serializer.validated_data.get("currency")
                 )
+            except Exception as e:
+                print("Razorpay error:", str(e))
+                return Response(
+                    {
+                        "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        "message": "Razorpay order creation failed",
+                        "error": str(e)
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            print(order_response)
             response = {
                 "status_code" : status.HTTP_201_CREATED,
                 "message" : "order created",
