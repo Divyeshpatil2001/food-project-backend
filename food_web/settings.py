@@ -134,6 +134,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -198,7 +199,7 @@ SIMPLE_JWT = {
 
 RAZORPAY_KEY_ID = 'rzp_test_mK8OLxdgPMsqTK'
 RAZORPAY_KEY_SECRET = '4OuLolKbibgBjUr08siNjexN'
-ALLOWED_HOSTS = ['21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app', 'localhost']
+# ALLOWED_HOSTS = ['21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = ['https://21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app']
 
