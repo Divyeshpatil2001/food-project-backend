@@ -2,3 +2,6 @@
 .env
 venv
 pycache
+staticfiles
+*.pyc
+__pycache__/
