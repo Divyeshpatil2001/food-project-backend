@@ -13,23 +13,35 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.exceptions import ValidationError
+
 # from rest_framework_simplejwt.models import OutstandingToken
 # Create your views here.
 class UserViews(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated,IsAdminUser]
-    authentication_classes = [JWTAuthentication]
     
-    def create(self,request,*args,**kwargs):
+    def create(self, request, *args, **kwargs):
         mutable_data = request.data.copy()
         mutable_data['password'] = make_password(mutable_data['password'])
-        serializer = self.serializer_class(data=mutable_data)
-        if serializer.is_valid():
-            serializer.save()               
-            return Response({'message':'user craete with passwordhash'},status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            serializer = self.serializer_class(data=mutable_data)
+            
+            # Validate the data
+            serializer.is_valid(raise_exception=True)
+            
+            # Save the user
+            serializer.save()
+            
+            return Response({'message': 'User created with password hash'}, status=status.HTTP_201_CREATED)
+        
+        except ValidationError as e:
+            return Response({'error': 'Validation Error', 'details': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            # Catch any other exceptions
+            return Response({'error': 'An unexpected error occurred', 'details': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     # def logout_view(self,request,*args,**kwargs):
     #     logout(request)
@@ -38,8 +50,8 @@ class UserViews(viewsets.ModelViewSet):
 class ProfileView(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     
 class LoginViews(viewsets.ViewSet):
     @action(detail=False,methods=['post'])
