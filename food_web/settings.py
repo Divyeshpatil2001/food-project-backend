@@ -153,11 +153,9 @@ AUTH_USER_MODEL = 'accounts.User'
 SUPERUSER_EMAIL = os.getenv("DJANGO_SUPERUSER_EMAIL", "")
 SUPERUSER_PASSWORD = os.getenv("DJANGO_SUPERUSER_PASSWORD", "")
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  
-]
+CORS_ALLOWED_ORIGINS = [*]
 
 # Media files config
 MEDIA_URL = '/media/'
@@ -211,6 +209,8 @@ RAZORPAY_KEY_SECRET = '4OuLolKbibgBjUr08siNjexN'
 # ALLOWED_HOSTS = ['21ac-2409-40c1-3f-48b1-d873-6e4-f8f1-372c.ngrok-free.app', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",  # Trust requests from this origin
+    "http://localhost:3000", 
+    "https://foodapp-divyesh.vercel.app",
+    "https://food-project-frontend-458q.vercel.app",
     "https://food-project-backend-1.onrender.com",  # Add your backend URL here
 ]
