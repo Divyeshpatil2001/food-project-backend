@@ -155,7 +155,9 @@ SUPERUSER_PASSWORD = os.getenv("DJANGO_SUPERUSER_PASSWORD", "")
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = ['*']
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", 
+    "https://foodapp-divyesh.vercel.app",
+    "https://food-project-frontend-458q.vercel.app",]
 
 
 # Media files config
