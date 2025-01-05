@@ -24,7 +24,11 @@ class OrdersViewSets(viewsets.ModelViewSet):
             return Orders.objects.filter(user=user)
         else:
             raise PermissionDenied("You must be logged in to access this resource.")
-    
+   
+    def perform_create(self, serializer):
+        # Automatically assign the logged-in user
+        serializer.save(user=self.request.user)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         if request.user != instance.user:
